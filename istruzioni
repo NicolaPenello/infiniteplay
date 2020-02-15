@@ -1,0 +1,26 @@
+Istruzioni 
+
+(nome_char_dev) = hello
+(nome_file) = sorgente
+
+1. aprire 2 pagine del teminale (li chiamerò "principale" e "ausiliario")
+2. digitare sul terminale ausiliario il comando "sudo tail -f /var/log/syslog": da qui avremo un feedback diretto di quello che sta succedendo nel kernel (ndr. comandi printk nel codice)
+3. dal terminale principale portarsi al percorso di salvataggio dei files (tramite opportuni comandi cd ...)
+4. ora ci si dovrebbe trovare al percorso /.../.../codiceNicolaPenello: da qui digitare da riga di comando il comando "make"
+5. questo comando compila il codice C e, se va a buon fine, genera diversi files tra cui (nome_file).ko
+6. procediamo all'inserimento del modulo col comando da terminale principale: "sudo insmod ./(nome_file).ko" ed inserire la password del superuser se richiesto.
+7. eventualmente verificare l'effettivo inserimento del modulo col comando da terminale principale "lsmod|grep (nome_file)"
+8. se l'operazione è andata a buon fine occorre recuperare il major number del modulo (il codice procede all'allocaazione dinamica del major number onde scongiurare conflitti)
+9. a questo punto ci si sposti nella vista del terminale ausiliario e si cerchi la stringa "Il major number è: (major_number)": tale informazioni ci servirà al prossimo passo
+10. procedere ora alla costruzione del character device col comando da terminale principale "sudo mknod -m 666 /dev/(nome_char_dev) c (major_number) 0"
+11. verificare l'effettivo inserimendo del nodo col comando da terminale principale "ls -l /dev/nicola_device"
+12. da ora è possibile interagire con il character device tramite i comandi "cat /dev/(nome_char_dev)" ed "echo (stringa)>/dev/(nome_char_dev)"
+13. completato il test del device è opportuno "smontare" tutto ciò che si è costruito
+14. da terminale principale inserire i comandi "sudo rm /dev/(nome_char_dev)" e poi "sudo rmmod (nome_file).ko"
+
+
+Nota importante: nelle specifiche non era indicato come gestire il cat'ing di un messaggio più lungo del buffer di memorizzazione.
+A questo punto mi si sono aperte due possibilità:
+a. scrivere nel buffer solo una porzione del messaggio troppo lungo (perdendo quindi parte del messaggio)
+b. inibire completamente la scrittura in buffer per messaggi troppo lunghi e comunicare un errore/eccezione tramite printk
+Personalmente ho ritenuto più saggio scegliere l'opzione b.
