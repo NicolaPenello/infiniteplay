@@ -3,6 +3,8 @@ Istruzioni
 (nome_char_dev) = hello
 (nome_file) = sorgente
 
+
+0. Preliminarmente è necessario installare i pacchetti make e linux-headers-files
 1. aprire 2 pagine del teminale (li chiamerò "principale" e "ausiliario")
 2. digitare sul terminale ausiliario il comando "sudo tail -f /var/log/syslog": da qui avremo un feedback diretto di quello che sta succedendo nel kernel (ndr. comandi printk nel codice)
 3. dal terminale principale portarsi al percorso di salvataggio dei files (tramite opportuni comandi cd ...)
